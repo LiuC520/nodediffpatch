@@ -23,3 +23,5 @@
 ##### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;也可以简写的哦：patbundle merge -o l1.txt -p patches.pat ，这样的话新的文件名就是 newl1.txt
 ##### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;也可以简写的哦：patbundle merge -o l1.txt ，这样的话新的文件名就是 newl1.txt，默认的pat文件就是patches.pat
 ##### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;这就是把l1.txt和pat文件合并成一个新的文件
+>3、patbundle -h
+##### &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;查看帮助文档，不知道命令怎么用的，可以查看下哦
