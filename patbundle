@@ -42,7 +42,7 @@ var argv = require('yargs')
                 description: "新文件"
             })
             .argv;
-        merge(argv.o, argv.p);
+        merge(argv.o, argv.p, argv.n);
             
     })
     .argv;
