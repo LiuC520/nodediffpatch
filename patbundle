@@ -31,11 +31,15 @@ var argv = require('yargs')
         var argv = yargs.reset()
             .option("o", {
                 alias: "oldbundle",
-                description: "新文件"
+                description: "旧文件"
             })
             .option("p", {
                 alias: "patchfile",
                 description: "补丁文件"
+            })
+            .option("n", {
+                alias: "newfile",
+                description: "新文件"
             })
             .argv;
         merge(argv.o, argv.p);
@@ -84,12 +88,13 @@ function checkfile(o, n){
         })
     })  
 }
-function merge(o, p){
+function merge(o, p, n){
      var oldfile=null;
     var patchfile=null ;
 
     var oldFilePath = currentpath + '/patch/' + o;
     var patchPath = p ? currentpath + '/patch/' + p : patchFilePath;// also patchPath
+    var newFilePath = n ? currentpath + '/patch/' + n : currentpath + '/patch/new' + o;
     
     rf.exists(oldFilePath,function(e){
         if(e){
@@ -115,7 +120,7 @@ function merge(o, p){
 
                 var patArr = dmp.patch_fromText(patchfile)
                 var newstring  = dmp.patch_apply(patArr,oldfile)
-                var lastnewFile = currentpath + '/patch/c.txt';
+                var lastnewFile = newFilePath;
                 
                 rf.writeFile(lastnewFile, newstring[0],function(e){
                     if(e) throw new Error("写入文件失败，请输入 patbundle -h 查看帮助");
