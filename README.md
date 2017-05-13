@@ -9,7 +9,8 @@
 
 ##### 3、打开本地终端，输入  git clone https://github.com/LiuC520/nodediffpatch.git
 ##### 4、然后输入  cd nodediffpatch && npm i
-##### 5、然后把你要生成的新、旧文件放到nodediffpatch的patch文件夹下，然后就可以用命令生成补丁了
+##### 5、然后输入  sudo npm link ，输入密码后就可以了
+##### 6、然后把你要生成的新、旧文件放到nodediffpatch的patch文件夹下，然后就可以用命令生成补丁了
 ### 命令如下：
 ###### 下面的 l1.txt 是旧文件，l2.txt 是新文件，只需要换成你自己的就行了
 > 1、patbundle patch -o l1.txt -n l2.txt 
