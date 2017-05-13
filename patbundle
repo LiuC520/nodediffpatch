@@ -1,0 +1,130 @@
+#!/usr/bin/env node
+    var rf=require("fs"); 
+    var path = require('path');
+    var diff_match_patch = require('./diff_match_patch_uncompressed.js')
+    var currentpath = process.cwd();
+    var patchFilePath = currentpath + '/patch/patches.pat';
+    var dmp = new diff_match_patch.diff_match_patch();
+
+var argv = require('yargs')
+    .usage('Usage: hello [options]')
+    .example('patbundle patch -o old.txt -n new.txt', '生成补丁文件')
+    .example('patbundle merge -o old.txt -p patches.pat', '合并文件')
+    .help('h')
+    .alias('h', 'help')
+    .epilog('刘成')
+    .command("patch","生成patch文件",function(yargs){
+        var argv = yargs.reset()
+            .option("o", {
+                alias: "oldbundle",
+                description: "旧文件"
+            })
+            .option("n", {
+                alias: "newbundle",
+                description: "新文件"
+            })
+            .argv;
+        //generate patch file
+        checkfile(argv.o, argv.n);
+    })
+    .command("merge","合并patch文件",function(yargs){
+        var argv = yargs.reset()
+            .option("o", {
+                alias: "oldbundle",
+                description: "新文件"
+            })
+            .option("p", {
+                alias: "patchfile",
+                description: "补丁文件"
+            })
+            .argv;
+        merge(argv.o, argv.p);
+            
+    })
+    .argv;
+
+function checkfile(o, n){
+    var oldfile=null;
+    var newfile=null ;
+
+    var oldFilePath = currentpath + '/patch/' + o;
+    var newFilePath = currentpath + '/patch/' + n;
+    
+    rf.exists(oldFilePath,function(e){
+        if(e){
+            oldfile=rf.readFileSync(oldFilePath,"utf-8");
+        }else{
+            throw new Error("请输入文件全称，带上后缀")
+        }
+
+        rf.exists(newFilePath,function(e){
+            if(e){
+                newfile=rf.readFileSync(newFilePath,"utf-8"); 
+            }else{
+                throw new Error("请输入文件全称，带上后缀")
+            }
+
+            if(oldfile !== null && !newfile){
+                throw new Error("新文件不存在")
+            }else if(!oldfile && newfile !== null ){
+                throw new Error("旧文件不存在")
+            }else if(oldfile !== null && newfile !==null){ 
+
+                var patchfile = dmp.patch_make(oldfile, newfile)//得到补丁，返回补丁数组信息
+                // var newstring  = dmp.patch_apply(patchfile,oldfile)//补丁+旧文件，得到新的数组，数组第一个就是新的string
+                var pat = dmp.patch_toText(patchfile)//生成补丁文件
+                rf.writeFile(patchFilePath, pat,function(e){
+                    if(e) throw new Error("生成补丁文件失败，请输入 patbundle -h 查看帮助");
+                    console.log("生成补丁文件成功")
+                    // merge(dmp, patchFilePath, oldfile, currentpath, rf)
+                })
+            }else if(oldfile == null && newfile ==null){
+                throw new Error("新旧文件不存在")
+            }
+        })
+    })  
+}
+function merge(o, p){
+     var oldfile=null;
+    var patchfile=null ;
+
+    var oldFilePath = currentpath + '/patch/' + o;
+    var patchPath = p ? currentpath + '/patch/' + p : patchFilePath;// also patchPath
+    
+    rf.exists(oldFilePath,function(e){
+        if(e){
+            oldfile = rf.readFileSync(oldFilePath,"utf-8");
+        }else{
+            throw new Error("请输入文件全称，带上后缀")
+        }
+
+        rf.exists(patchPath,function(e){
+            if(e){
+                patchfile = rf.readFileSync(patchPath,"utf-8"); 
+            }else{
+                throw new Error("请输入文件全称，带上后缀")
+            }
+            if(oldfile !== null && !patchfile){
+
+                throw new Error("补丁文件不存在")
+
+            }else if(!oldfile && patchfile !== null ){
+                throw new Error("旧文件不存在")
+            }else if(oldfile !== null && patchfile !==null){ 
+                //merge： read string from file pat ，make array patchs，then merge
+
+                var patArr = dmp.patch_fromText(patchfile)
+                var newstring  = dmp.patch_apply(patArr,oldfile)
+                var lastnewFile = currentpath + '/patch/c.txt';
+                
+                rf.writeFile(lastnewFile, newstring[0],function(e){
+                    if(e) throw new Error("写入文件失败，请输入 patbundle -h 查看帮助");
+                    console.log("写入文件成功")
+                })
+
+            }else if(oldfile == null && newfile ==null){
+                throw new Error("旧文件、补丁文件都不存在")
+            }
+        })
+    })  
+}

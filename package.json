@@ -1,0 +1,9 @@
+{
+  "name": "patbundle",
+  "bin": {
+    "patbundle": "patbundle"
+  },
+  "dependencies": {
+    "yargs": "^8.0.1"
+  }
+}
